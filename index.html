@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Universo en Ti | 8M</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #d4af37;
+            --purple-deep: #1a0b2e;
+            --woman-purple: #8e44ad;
+            --bg: #050508;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            min-height: 200vh;
+        }
+
+        #canvas-nebula {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+        }
+
+        /* Pantalla de Inicio - Ritual de Entrada */
+        #ritual-overlay {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, var(--purple-deep), var(--bg));
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .venus-symbol {
+            font-size: 5rem;
+            color: var(--woman-purple);
+            text-shadow: 0 0 20px var(--woman-purple);
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .btn-ritual {
+            padding: 18px 50px;
+            background: none;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+            letter-spacing: 4px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-ritual:hover {
+            background: var(--gold);
+            color: var(--bg);
+            box-shadow: 0 0 40px var(--gold);
+        }
+
+        /* Contenedor Principal */
+        .universe-content {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 150px 20px;
+            text-align: center;
+        }
+
+        .title-aura h2 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1rem, 4vw, 1.5rem);
+            color: var(--gold);
+            letter-spacing: 10px;
+            margin-bottom: 10px;
+            opacity: 0;
+        }
+
+        .title-aura h1 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(2.5rem, 10vw, 5rem);
+            background: linear-gradient(to bottom, #fff 30%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 60px;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        /* El Pergamino Digital */
+        .shrine-box {
+            background: rgba(10, 10, 15, 0.95);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            padding: 60px 40px;
+            position: relative;
+            box-shadow: 0 0 100px rgba(142, 68, 173, 0.1);
+        }
+
+        .shrine-box::after {
+            content: '♀';
+            position: absolute;
+            bottom: 20px; right: 20px;
+            font-size: 2rem;
+            color: rgba(212, 175, 55, 0.1);
+        }
+
+        #letter {
+            font-size: 1.2rem;
+            line-height: 2;
+            text-align: left;
+            font-weight: 300;
+            color: #f0f0f0;
+            white-space: pre-wrap;
+        }
+
+        .constellation-map {
+            margin-top: 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            opacity: 0;
+            transition: 2s;
+        }
+
+        .trait-card {
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px;
+            transition: 0.4s;
+            cursor: default;
+        }
+
+        .trait-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-10px);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .trait-card i {
+            display: block;
+            color: var(--gold);
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        .reveal { opacity: 1 !important; transform: none !important; transition: 1.5s all ease-out; }
+
+        .audio-control {
+            position: fixed;
+            bottom: 20px; left: 20px;
+            z-index: 1000;
+            font-size: 0.7rem;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ritual-overlay">
+        <div class="venus-symbol">♀</div>
+        <button class="btn-ritual" onclick="begin()">Feliz Día de la Mujer Mi Amor</button>
+    </div>
+
+    <canvas id="canvas-nebula"></canvas>
+
+    <div class="audio-control" id="status-music">Musica: Off</div>
+
+    <div class="universe-content">
+        <div class="title-aura">
+            <h2 id="subtitle">8 de Marzo</h2>
+            <h1 id="maintitle">TE AMO MI AMOR</h1>
+        </div>
+
+        <div class="shrine-box">
+            <div id="letter"></div>
+        </div>
+
+        <div class="constellation-map" id="map">
+            <div class="trait-card"><i>ESTRELLA I</i><h3>Resiliencia</h3><p>Tu capacidad de florecer incluso en el desierto neta me deja sin palabras.</p></div>
+            <div class="trait-card"><i>ESTRELLA II</i><h3>Inteligencia</h3><p>La verdad, la forma en que ves el mundo es lo que más me tiene enganchado.</p></div>
+            <div class="trait-card"><i>ESTRELLA III</i><h3>Valentía</h3><p>Pues cada paso que das, aunque te cueste, es una lección de coraje para mí.</p></div>
+        </div>
+    </div>
+
+    <audio id="musica-mp3" loop preload="auto">
+        <source src="musica.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const canvas = document.getElementById('canvas-nebula');
+        const ctx = canvas.getContext('2d');
+        const music = document.getElementById('musica-mp3');
+        let stars = [];
+
+        const message = `Neta que hoy no es un día cualquiera. Es el día en que el mundo se detiene a admirar lo que yo tengo la suerte de ver diario en ti. Pues la verdad, eres el recordatorio constante de que la fuerza no siempre es ruido; a veces es esa calma y dedicación con la que enfrentas cada reto, mi amor. 🥺✨
+
+Me llena de orgullo ver cómo no te rindes, cómo neta le pones el corazón a todo lo que haces. Eres una chica increíble, valiente y con una luz que, neta, ni a miles de kilómetros se apaga. 🥹❤️‍🩹
+
+Este universo que ves aquí es solo una pequeña representación de lo que provocas jiji :> orden en el caos y brillo en la oscuridad... TE AMO CON TODO MI SER 🥹❤️‍🩹`;
+
+        function begin() {
+            const musicStatus = document.getElementById('status-music');
+            
+            // La promesa de audio asegura que se escuche tras la interacción
+            music.play().then(() => {
+                musicStatus.innerText = "Musica: On";
+            }).catch(e => {
+                console.log("Audio bloqueado o no encontrado:", e);
+                musicStatus.innerText = "Musica: Error de carga";
+            });
+
+            document.getElementById('ritual-overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('ritual-overlay').style.display = 'none';
+                revealContent();
+            }, 1500);
+        }
+
+        function revealContent() {
+            document.getElementById('subtitle').classList.add('reveal');
+            setTimeout(() => document.getElementById('maintitle').classList.add('reveal'), 500);
+            
+            let i = 0;
+            const letterDiv = document.getElementById('letter');
+            function type() {
+                if (i < message.length) {
+                    letterDiv.innerHTML += message.charAt(i);
+                    i++;
+                    setTimeout(type, 35);
+                    if(i === message.length) {
+                        document.getElementById('map').classList.add('reveal');
+                    }
+                }
+            }
+            setTimeout(type, 1500);
+        }
+
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for(let i=0; i<120; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 1.5 + 0.5,
+                    vx: (Math.random() - 0.5) * 0.3,
+                    vy: (Math.random() - 0.5) * 0.3
+                });
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(212, 175, 55, 0.8)";
+            
+            stars.forEach((s, idx) => {
+                s.x += s.vx;
+                s.y += s.vy;
+
+                if(s.x < 0 || s.x > canvas.width) s.vx *= -1;
+                if(s.y < 0 || s.y > canvas.height) s.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI*2);
+                ctx.fill();
+
+                for(let j = idx + 1; j < stars.length; j++) {
+                    let s2 = stars[j];
+                    let dist = Math.hypot(s.x - s2.x, s.y - s2.y);
+                    if(dist < 120) {
+                        ctx.strokeStyle = `rgba(142, 68, 173, ${1 - dist/120})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(s.x, s.y);
+                        ctx.lineTo(s2.x, s2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        animate();
+    </script>
+</body>
+</html>
